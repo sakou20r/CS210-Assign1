@@ -1,0 +1,254 @@
+// cs210assign1.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+
+#include "stdafx.h"
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+//#include <unistd.h>
+
+using namespace std;
+
+// This program determines the run time of an algorithm whose life
+// is very short. A measurement technique is used that determines
+// the number of times the algorithm can run in one second. The
+// elapsed time for one run of the algorithm can then be derived
+// from this value.
+
+int Attempt_1(int n);
+double Attempt_2(double t[], int n);
+int Attempt_3(int n);
+int Attempt_4(int n);
+
+int main()
+{
+
+// Verify host.
+	/*
+    char hostName [256];
+
+    gethostname (hostName, sizeof (hostName));
+    if (strcmp (hostName, "hercules") == 0)
+    {
+        cout << "Error: algorithm timing program will not run on hercules" << endl;
+        exit (1);
+    }
+    else if (strcmp (hostName, "a049831") == 0)
+    {
+        cout << "Error: algorithm timing program will not run on a049831" << endl;
+        exit (1);
+    }
+	*/
+
+// Variable declarations.
+
+    unsigned  int alg_case;
+    unsigned int reps;
+    unsigned int i;
+    int count;
+    vector <long> iterations;
+    time_t start;
+    time_t finish;
+    double timeWithAlgorithm;
+    double timeWithoutAlgorithm;
+
+
+// Get input.
+
+    cout << "Algorithm Timing Started!" << endl;
+
+    cout << "Enter n (1 - 4): " << endl;
+    cin >> alg_case;
+
+    cout << "Enter repetitions: ";
+    cin >> reps;
+ 
+// Phase 1.
+
+    iterations.reserve (reps);
+
+    // Determine the number of iterations of the following while loop that
+    // can be executed in one second (it includes the algorithm).
+	
+int value[] ={5, 10, 15, 20, 25, 30, 35};
+int n = 7;
+int results[7];
+for(int arr_count=0; arr_count<n; arr_count++)
+{
+	cout << "######################################## " << value[arr_count] << endl;
+	cout << "running for iteration " << value[arr_count] << endl;
+	cout << "########################################" <<endl;
+	while (iterations.size () < reps)
+{
+        count = 0;
+       start = time(0);
+        do
+  {
+            ++count;
+			if(alg_case==1){
+				results[arr_count] = Attempt_1(value[arr_count]);}
+			else if(alg_case==2)
+				{
+					double t[50];
+					results[arr_count] = Attempt_2(t, value[arr_count]);
+				}
+			
+			else if(alg_case==3)
+					{
+				
+				results[arr_count] = Attempt_3(value[arr_count]);
+			}
+			
+					else
+					{
+							results[arr_count] = Attempt_4(value[arr_count]);
+			}
+			
+				
+
+            // Algorithm that you are timing goes here for this phase
+         finish = time(0);
+     }
+            // Continue as long as time hasn't changed
+        while (finish == start);
+        // Record the number of iterations
+		iterations.push_back (count);
+	}
+
+
+    cout << "Iteration counts (with algorithm): " << endl;
+    for (i = 0; i < iterations.size (); ++i)
+    {
+        cout << iterations [i] << " ";
+    }
+    cout << endl;
+
+    cout << "Sorted iteration counts (with algorithm): " << endl;
+    sort (iterations.begin (), iterations.end ());
+    for (i = 0; i < iterations.size (); ++i)
+    {
+        cout << iterations [i] << " ";
+    }
+    cout << endl;
+
+    cout << "Selected value (with algorithm): " << iterations [reps / 2] << endl;
+    timeWithAlgorithm = 1000.0 / iterations [reps / 2];
+    cout << "Approximate elapsed time (with algorithm): " << timeWithAlgorithm << " ms" << endl;
+
+    iterations.clear ();
+
+// Phase 2.
+
+    iterations.reserve (reps);
+
+    // Now determine the number of iterations of the following while loop that
+    // can be executed in one second (it does not include the algorithm).
+
+    while (iterations.size () < reps)
+    {
+        count = 0;
+        start = time (0);
+        do
+        {
+            ++count;
+            // Algorithm is removed for this phase
+            //
+            finish = time (0);
+            // Continue as long as time hasn't changed
+		} 
+	while (finish == start);
+        // Record the number of iterations
+        iterations.push_back (count);
+    }
+
+    cout << "Iteration counts (without algorithm): " << endl;
+    for (i = 0; i < iterations.size (); ++i)
+    {
+        cout << iterations [i] << " ";
+    }
+    cout << endl;
+
+    cout << "Sorted iteration counts (without algorithm): " << endl;
+    sort (iterations.begin (), iterations.end ());
+    for (i = 0; i < iterations.size (); ++i)
+    {
+        cout << iterations [i] << " ";
+    }
+    cout << endl;
+
+    cout << "Selected value (without algorithm): " << iterations [reps / 2] << endl;
+    timeWithoutAlgorithm = 1000.0 / iterations [reps / 2];
+    cout << "Approximate elapsed time (without algorithm): " << timeWithoutAlgorithm << " ms" << endl;
+
+// Phase 3.
+
+    cout << "Approximate elapsed time (algorithm): " << timeWithAlgorithm - timeWithoutAlgorithm << " ms" << endl;
+
+    cout << "Algorithm Timing Ended!" << endl;
+}
+
+    return 0;
+}
+
+ int Attempt_1(int n){
+	 if (n == 1){
+		return 3;
+	 }
+	 else if (n == 2){
+		return 10;
+	 }
+	else
+	{
+		return (2 * Attempt_1 (n - 1) - Attempt_1 (n - 2));
+	 }
+}
+
+double Attempt_2(double t[], int n){
+	 t[1] = 3;
+	 t[2] = 10;
+	 int i = 3;
+	 while(i <= n)
+	 {
+		 t [i] = 2 * t [i - 1] - t [i - 2];
+		 i++;
+	 }
+	return t[n];
+ }
+
+int Attempt_3(int n){
+	if(n == 1){
+		return 3;}
+	else if(n == 2){
+		return 10;
+	}
+	else
+	{
+		int t_n_minus_1 = 10;
+		int t_n_minus_2 = 3;
+		int t_n;
+		int i = 3;
+		while (i <= n)
+		{
+			t_n = 2 * t_n_minus_1 - t_n_minus_2;
+			t_n_minus_2 = t_n_minus_1;
+			t_n_minus_1 = t_n;
+			i ++;
+		}
+		return t_n;
+	}
+}
+
+int Attempt_4(int n)
+{
+return (7 * n - 4);
+}
+// Created by Jaskirat Josan on 2018-09-07.
+//
+
+
